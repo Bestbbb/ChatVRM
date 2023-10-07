@@ -89,17 +89,20 @@ export default function Home() {
       // 在这里处理接收到的消息逻辑
       const message = data.text
       const audio = data.audio
-      const aiTalks = textsToScreenplay([message], koeiroParam);
-      console.log("aitalks",aiTalks)
-
+      const lines = message.split(/[。！？\n!?\n]/)
+      const results = new Array<string>();
+      let index = 0;
+      for (const line of lines) {
+        
+        const aiTalks = textsToScreenplay([line], koeiroParam);
+        handleSpeakAi(audio[index],aiTalks[0], () => {
+        });
+        index++;
+      }
+      
       // 文ごとに音声を生成 & 再生、返答を表示
       const currentAssistantMessage = message;
       setAssistantMessage(currentAssistantMessage);
-
-      handleSpeakAi(audio,aiTalks[0], () => {
-        console.log("执行")
-        setAssistantMessage(currentAssistantMessage);
-      });
     });
         //断连后重连
         ws.current.addEventListener('close', (event) => {
@@ -165,12 +168,24 @@ export default function Home() {
         setChatProcessing(false)
         return
       }
-      const aiTalks = textsToScreenplay([message], koeiroParam)
-      // 文ごとに音声を生成 & 再生、返答を表示
+      const lines = message.split(/[。！？\n!?\n]/)
+      let index = 0;
+      for (const line of lines) {
+        console.log("line",line);
+        const aiTalks = textsToScreenplay([line], koeiroParam);
+        handleSpeakAi(audio[index],aiTalks[0], () => {
+        });
+        index++;
+      }
       const currentAssistantMessage = message
-      handleSpeakAi(audio, aiTalks[0], () => {
-        setAssistantMessage(currentAssistantMessage)
-      })
+      setAssistantMessage(currentAssistantMessage)
+      // const aiTalks = textsToScreenplay([message], koeiroParam)
+      // console.log("aiTalks",aiTalks);
+      // // 文ごとに音声を生成 & 再生、返答を表示
+      // const currentAssistantMessage = message
+      // handleSpeakAi(audio, aiTalks[0], () => {
+      //   setAssistantMessage(currentAssistantMessage)
+      // })
 
       // const stream = await getChatResponseStream(messages, openAiKey).catch(
       //   (e) => {
@@ -187,7 +202,7 @@ export default function Home() {
       // let receivedMessage = "";
       // let aiTextLog = "";
       // let tag = "";
-      // // const sentences = new Array<string>();
+      // const sentences = new Array<string>();
       // try {
       //   while (true) {
       //     const { done, value } = await reader.read();

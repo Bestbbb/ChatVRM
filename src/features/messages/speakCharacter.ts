@@ -27,7 +27,7 @@ const createSpeakCharacter = () => {
         () => null
       )
       lastTime = Date.now()
-      return buffer
+            return buffer
     })
 
     prevFetchPromise = fetchPromise
@@ -36,7 +36,6 @@ const createSpeakCharacter = () => {
         console.log("audioBuffer",audioBuffer)
         onStart?.()
         if (!audioBuffer) {
-          console.log("caonima")
           return
         }
         return viewer.model?.speak(audioBuffer, screenplay)
@@ -44,6 +43,8 @@ const createSpeakCharacter = () => {
     )
     prevSpeakPromise.then(() => {
       onComplete?.()
+    }).catch((e) => {
+      console.log("e",e)
     })
   }
 }
